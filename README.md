@@ -2,7 +2,7 @@
 
 > Track your Football Manager squad across seasons — right in your browser.
 
-FMImporter is a lightweight, client-side web app that lets you import Football Manager HTML exports, track player development over time, and plan your squad with a drag-and-drop builder. No server. No login. No data leaves your machine.
+App is online at https://seljenes.no/fmimporter is a lightweight, client-side web app that lets you import Football Manager HTML exports, track player development over time, and plan your squad with a drag-and-drop builder. No server. No login. No data leaves your machine.
 
 ---
 
