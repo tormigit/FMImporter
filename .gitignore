@@ -1,6 +1,9 @@
 # Claude local settings
 .claude/
 
+# Stray nested clone
+FMImporter/
+
 # OS
 .DS_Store
 Thumbs.db
