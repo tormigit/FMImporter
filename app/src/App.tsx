@@ -326,7 +326,7 @@ function App() {
       <header className="bg-slate-900 text-white px-5 py-3 flex items-center gap-4 flex-shrink-0 shadow-lg">
         <div className="flex-1 min-w-0">
           <div className="text-base font-bold tracking-tight leading-none">FMImporter</div>
-          <div className="text-slate-400 text-xs mt-0.5">Client-side · IndexedDB · UID tracking · <span className="text-slate-500">v0.6.0</span></div>
+          <div className="text-slate-400 text-xs mt-0.5">Client-side · IndexedDB · UID tracking · <span className="text-slate-500">v0.6.1</span></div>
         </div>
 
         {status && (
