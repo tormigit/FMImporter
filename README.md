@@ -24,11 +24,28 @@ FMImporter is a lightweight, client-side web app that lets you import Football M
 
 ## 🚀 Getting Started (using the app)
 
-1. In Football Manager, go to your squad view and set up columns (at minimum: **UID**, **CA**, **PA**)
-2. Use FM's **Print to HTML** feature to export the view
-3. Open [FMImporter](https://seljenes.no/fmimporter/app) in your browser
-4. Click **Import HTML** and select your file
-5. Repeat each season to build up your history
+### Step 1 — Set up the correct view in Football Manager
+
+FMImporter requires a specific set of columns to work correctly. To make this easy, a ready-made FM view file is included in this repo:
+
+📁 [`demofiles/FMimporterSquadView.fmf`](demofiles/FMimporterSquadView.fmf)
+
+**How to install it:**
+1. Download `FMimporterSquadView.fmf`
+2. Place it in your FM views folder:
+   - **Windows:** `Documents/Sports Interactive/Football Manager 20XX/views/`
+   - **Mac:** `~/Documents/Sports Interactive/Football Manager 20XX/views/`
+3. In Football Manager, open your squad screen
+4. Click the **Views** button (top right of the squad list) and select **FMimporterSquadView**
+
+This view includes all required columns: Player, Position, Age, Personality, Height, CA, PA, Agg, Bra, Cmp, Dec, Det, Jum, Nat, Pac, Wor, Prof, Amb, Nationality, Home-Grown Status, Due Date, UID, AT Apps, AT Gls.
+
+### Step 2 — Export and import
+
+1. With the view active, use FM's **Print to HTML** feature (right-click the squad list or use the game menu) to save the file
+2. Open [FMImporter](https://seljenes.no/fmimporter) in your browser
+3. Click **Import HTML** and select your exported file
+4. Repeat each season to build up your history
 
 ---
 

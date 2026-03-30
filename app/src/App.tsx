@@ -49,10 +49,16 @@ function GuideView() {
       </div>
 
       <GuideSection title="Getting Started">
-        <p><strong>1. Export from FM.</strong> In Football Manager, go to your squad view, set up the columns you want (the app needs at least CA, PA, UID), then use <em>Print to HTML</em> to save the file.</p>
-        <p><strong>2. Import into FMImporter.</strong> Click <strong>Import HTML</strong> in the top bar and select your exported file. The app reads the file locally — nothing is sent to a server.</p>
-        <p><strong>3. Import again each season.</strong> Every time you import a new file, it is stored as a separate <em>snapshot</em>. The app links snapshots by the player's UID, so you can track changes over time.</p>
-        <p><strong>4. Your data stays in your browser.</strong> All data is stored in your browser's IndexedDB. Use <strong>Export JSON</strong> to back it up and <strong>Import JSON</strong> to restore it.</p>
+        <p><strong>1. Install the FM view file.</strong> FMImporter requires a specific set of columns in Football Manager to work correctly. Download <strong>FMimporterSquadView.fmf</strong> from the <a href="https://github.com/tormigit/FMImporter/tree/main/demofiles" target="_blank" rel="noopener noreferrer" className="underline text-blue-600 hover:text-blue-800">GitHub repository</a> and place it in your FM views folder:</p>
+        <ul className="list-disc list-inside space-y-1 ml-2">
+          <li><strong>Windows:</strong> Documents/Sports Interactive/Football Manager 20XX/views/</li>
+          <li><strong>Mac:</strong> ~/Documents/Sports Interactive/Football Manager 20XX/views/</li>
+        </ul>
+        <p>Then open your squad screen in FM, click the <strong>Views</strong> button (top right of the squad list), and select <strong>FMimporterSquadView</strong>.</p>
+        <p><strong>2. Export from FM.</strong> With the view active, right-click the squad list (or use the game menu) and choose <em>Print to HTML</em> to save the file.</p>
+        <p><strong>3. Import into FMImporter.</strong> Click <strong>Import HTML</strong> in the top bar and select your exported file. The app reads the file locally — nothing is sent to a server.</p>
+        <p><strong>4. Import again each season.</strong> Every time you import a new file, it is stored as a separate <em>snapshot</em>. The app links snapshots by the player's UID, so you can track changes over time.</p>
+        <p><strong>5. Your data stays in your browser.</strong> All data is stored in your browser's IndexedDB. Use <strong>Export JSON</strong> to back it up and <strong>Import JSON</strong> to restore it.</p>
       </GuideSection>
 
       <GuideSection title="Views">
