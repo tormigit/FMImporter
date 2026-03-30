@@ -1,0 +1,10 @@
+{
+  "name": "seljefc-squad-overview",
+  "private": true,
+  "scripts": {
+    "dev":     "npm run dev     --prefix app",
+    "build":   "npm run build   --prefix app",
+    "preview": "npm run preview --prefix app",
+    "install": "npm install     --prefix app"
+  }
+}

@@ -1,0 +1,5 @@
+/* Kept only for elements not yet fully converted to Tailwind utilities */
+
+/* Delta values in compare mode */
+.deltaPositive { color: #16a34a; }
+.deltaNegative { color: #dc2626; }
