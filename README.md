@@ -125,3 +125,5 @@ MIT — do whatever you want with it. A mention is always appreciated.
 ---
 
 *Built with ☕ and too many late-night FM sessions by [seljeSoft](https://seljenes.no)*
+
+[![Support my caffeine addiction](https://img.shields.io/badge/☕_Support_my_caffeine_addiction-amber?style=for-the-badge)](https://buy.stripe.com/7sY3cvaRy83Xfc5dZ0bQY0k)
