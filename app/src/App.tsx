@@ -49,16 +49,27 @@ function GuideView() {
       </div>
 
       <GuideSection title="Getting Started">
-        <p><strong>1. Install the FM view file.</strong> FMImporter requires a specific set of columns in Football Manager to work correctly. Download <strong>FMimporterSquadView.fmf</strong> from the <a href="https://github.com/tormigit/FMImporter/tree/main/demofiles" target="_blank" rel="noopener noreferrer" className="underline text-blue-600 hover:text-blue-800">GitHub repository</a> and place it in your FM views folder:</p>
-        <ul className="list-disc list-inside space-y-1 ml-2">
-          <li><strong>Windows:</strong> Documents/Sports Interactive/Football Manager 20XX/views/</li>
-          <li><strong>Mac:</strong> ~/Documents/Sports Interactive/Football Manager 20XX/views/</li>
-        </ul>
-        <p>Then open your squad screen in FM, click the <strong>Views</strong> button (top right of the squad list), and select <strong>FMimporterSquadView</strong>.</p>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-2">
+          <p className="font-semibold text-blue-800">Step 1 — Install the FM view file</p>
+          <p>FMImporter requires a specific set of columns in Football Manager. A ready-made view file is available to download from the GitHub repository:</p>
+          <a
+            href="https://github.com/tormigit/FMImporter/raw/main/demofiles/FMimporterSquadView.fmf"
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-md text-xs font-medium transition-colors"
+          >
+            ⬇ Download FMimporterSquadView.fmf
+          </a>
+          <p className="text-xs text-blue-700">Place the file in your FM views folder:</p>
+          <ul className="list-disc list-inside text-xs text-blue-700 space-y-0.5 ml-1">
+            <li><strong>Windows:</strong> Documents/Sports Interactive/Football Manager 20XX/views/</li>
+            <li><strong>Mac:</strong> ~/Documents/Sports Interactive/Football Manager 20XX/views/</li>
+          </ul>
+          <p className="text-xs text-blue-700">Then in FM open your squad screen, click <strong>Views</strong> (top right) and select <strong>FMimporterSquadView</strong>.</p>
+        </div>
         <p><strong>2. Export from FM.</strong> With the view active, right-click the squad list (or use the game menu) and choose <em>Print to HTML</em> to save the file.</p>
         <p><strong>3. Import into FMImporter.</strong> Click <strong>Import HTML</strong> in the top bar and select your exported file. The app reads the file locally — nothing is sent to a server.</p>
         <p><strong>4. Import again each season.</strong> Every time you import a new file, it is stored as a separate <em>snapshot</em>. The app links snapshots by the player's UID, so you can track changes over time.</p>
         <p><strong>5. Your data stays in your browser.</strong> All data is stored in your browser's IndexedDB. Use <strong>Export JSON</strong> to back it up and <strong>Import JSON</strong> to restore it.</p>
+        <p className="text-xs text-slate-400">Full documentation and source code: <a href="https://github.com/tormigit/FMImporter" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600">github.com/tormigit/FMImporter</a></p>
       </GuideSection>
 
       <GuideSection title="Views">
@@ -531,7 +542,11 @@ function App() {
                 )}
               </div>
 
-              {selectedPlayerUid ? (
+              {activeTab === 'guide' ? (
+                <GuideView />
+              ) : activeTab === 'support' ? (
+                <SupportView />
+              ) : selectedPlayerUid ? (
                 <PlayerDetail uid={selectedPlayerUid} onBack={() => setSelectedPlayerUid(null)} />
               ) : !effectiveSnapshotId ? (
                 /* Empty state */
@@ -595,10 +610,6 @@ function App() {
                 </>
               ) : activeTab === 'builder' ? (
                 <BuilderView players={players} comparePlayers={comparePlayers} />
-              ) : activeTab === 'guide' ? (
-                <GuideView />
-              ) : activeTab === 'support' ? (
-                <SupportView />
               ) : (
                 <SquadDashboard
                   players={players}
