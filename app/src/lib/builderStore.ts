@@ -1,31 +1,48 @@
-export type BuilderSectionId = 'GK' | 'DEF' | 'MID_DM' | 'FWD_AM'
+export type BuilderSectionId = 'GK' | 'DEF' | 'MID_DM' | 'FWD_AM' | 'INCOMING' | 'LOANED_OUT' | 'YOUTH_TALENT' | 'YOUTH_TRASH'
 export type BuilderLayout = Record<BuilderSectionId, string[]>
 
 export const MAX_CA_HISTORY = 5
 
 const BUILDER_KEY = 'fm-builder-global'
 const CA_LABELS_KEY = 'ca-history-labels'
+const INCOMING_PLAYERS_KEY = 'fm-incoming-players'
+
+export type IncomingPlayer = {
+  uid: string
+  name: string
+  ca: number | null
+  pa: number | null
+}
 
 export interface AppSettings {
   caLabels: string[]
   builderLayout: BuilderLayout
+  incomingPlayers: Record<string, IncomingPlayer>
+}
+
+function normalizeLayout(layout: Partial<Record<BuilderSectionId, string[]>> | null | undefined): BuilderLayout {
+  return {
+    GK: layout?.GK ?? [],
+    DEF: layout?.DEF ?? [],
+    MID_DM: layout?.MID_DM ?? [],
+    FWD_AM: layout?.FWD_AM ?? [],
+    INCOMING: layout?.INCOMING ?? [],
+    LOANED_OUT: layout?.LOANED_OUT ?? [],
+    YOUTH_TALENT: layout?.YOUTH_TALENT ?? [],
+    YOUTH_TRASH: layout?.YOUTH_TRASH ?? [],
+  }
 }
 
 export function emptyLayout(): BuilderLayout {
-  return { GK: [], DEF: [], MID_DM: [], FWD_AM: [] }
+  return normalizeLayout(null)
 }
 
 export function loadBuilderLayout(): BuilderLayout {
   try {
     const raw = localStorage.getItem(BUILDER_KEY)
     if (!raw) return emptyLayout()
-    const stored = JSON.parse(raw) as BuilderLayout
-    return {
-      GK: stored.GK ?? [],
-      DEF: stored.DEF ?? [],
-      MID_DM: stored.MID_DM ?? [],
-      FWD_AM: stored.FWD_AM ?? [],
-    }
+    const stored = JSON.parse(raw) as Partial<Record<BuilderSectionId, string[]>>
+    return normalizeLayout(stored)
   } catch {
     return emptyLayout()
   }
@@ -33,7 +50,7 @@ export function loadBuilderLayout(): BuilderLayout {
 
 export function saveBuilderLayout(layout: BuilderLayout): void {
   try {
-    localStorage.setItem(BUILDER_KEY, JSON.stringify(layout))
+    localStorage.setItem(BUILDER_KEY, JSON.stringify(normalizeLayout(layout)))
   } catch {}
 }
 
@@ -48,6 +65,20 @@ export function loadCaLabels(): string[] {
 export function saveCaLabels(labels: string[]): void {
   try {
     localStorage.setItem(CA_LABELS_KEY, JSON.stringify(labels))
+  } catch {}
+}
+
+export function loadIncomingPlayers(): Record<string, IncomingPlayer> {
+  try {
+    const raw = localStorage.getItem(INCOMING_PLAYERS_KEY)
+    if (raw) return JSON.parse(raw) as Record<string, IncomingPlayer>
+  } catch {}
+  return {}
+}
+
+export function saveIncomingPlayers(players: Record<string, IncomingPlayer>): void {
+  try {
+    localStorage.setItem(INCOMING_PLAYERS_KEY, JSON.stringify(players))
   } catch {}
 }
 
@@ -75,10 +106,13 @@ export function exportSettings(): AppSettings {
   return {
     caLabels: loadCaLabels(),
     builderLayout: loadBuilderLayout(),
+    incomingPlayers: loadIncomingPlayers(),
   }
 }
 
 export function importSettings(settings: Partial<AppSettings>): void {
   if (settings.caLabels) saveCaLabels(settings.caLabels)
-  if (settings.builderLayout) saveBuilderLayout(settings.builderLayout)
+  if (settings.builderLayout) saveBuilderLayout(normalizeLayout(settings.builderLayout))
+  if (settings.incomingPlayers) saveIncomingPlayers(settings.incomingPlayers)
+  else if (settings.caLabels || settings.builderLayout) saveIncomingPlayers({})
 }

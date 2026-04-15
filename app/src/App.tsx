@@ -4,11 +4,19 @@ import './App.css'
 import { db, deleteSnapshot, exportBundle, importBundle, resetDatabase, saveSnapshotImport } from './lib/db'
 import { parseFmHtmlExport } from './lib/fmHtmlImport'
 import type { PlayerIndex, PlayerSnapshot, Snapshot } from './lib/types'
-import { loadCaLabels, saveCaLabels } from './lib/builderStore'
+import {
+  loadCaLabels,
+  saveCaLabels,
+  loadBuilderLayout,
+  saveBuilderLayout,
+  loadIncomingPlayers,
+  saveIncomingPlayers,
+} from './lib/builderStore'
 import { SquadAnalyticsTable } from './components/SquadAnalyticsTable'
 import { PlayerDetail } from './components/PlayerDetail'
 import { SquadDashboard } from './components/SquadDashboard'
 import { BuilderView } from './components/BuilderView'
+import { AdBanner } from './components/AdBanner'
 
 function downloadJson(filename: string, obj: unknown): void {
   const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' })
@@ -20,7 +28,76 @@ function downloadJson(filename: string, obj: unknown): void {
   URL.revokeObjectURL(url)
 }
 
-type ActiveTab = 'squad' | 'dashboard' | 'builder' | 'guide' | 'support'
+function ColorChartView() {
+  return (
+    <div className="space-y-4 max-w-3xl">
+      <div className="bg-slate-800 text-white rounded-xl p-6">
+        <h1 className="text-xl font-bold mb-1">Color Chart</h1>
+        <p className="text-slate-300 text-sm">Reference for all colour codes used across the app.</p>
+      </div>
+
+      <GuideSection title="Recommendation (Rec.) Colours">
+        <div className="space-y-2">
+          <ColorSwatch bg="bg-emerald-100" text="text-emerald-700" label="KEE" desc="Keep" />
+          <ColorSwatch bg="bg-blue-100" text="text-blue-700" label="DEV" desc="Develop" />
+          <ColorSwatch bg="bg-amber-100" text="text-amber-700" label="MON" desc="Monitor" />
+          <ColorSwatch bg="bg-red-100" text="text-red-700" label="SEL" desc="Sell" />
+        </div>
+        <p className="mt-2 text-sm text-slate-600">A dashed border + ✎ indicates a manual override.</p>
+      </GuideSection>
+
+      <GuideSection title="Attribute Change Colours (comparison)">
+        <div className="flex gap-3 flex-wrap">
+          <span className="px-3 py-1 rounded text-xs font-semibold" style={{ backgroundColor: '#dcfce7' }}>Increased</span>
+          <span className="px-3 py-1 rounded text-xs font-semibold" style={{ backgroundColor: '#fee2e2' }}>Decreased</span>
+          <span className="px-3 py-1 rounded text-xs font-semibold bg-slate-100">Unchanged / no data</span>
+        </div>
+      </GuideSection>
+
+      <GuideSection title="Player Name Colour Coding">
+        <div className="space-y-2">
+          <ColorSwatch bg="bg-white border border-slate-200" text="text-emerald-600" label="John Smith" desc="Trained at club (0–21)" />
+          <ColorSwatch bg="bg-white border border-slate-200" text="text-orange-400" label="John Smith" desc="Trained in nation (15–21)" />
+          <ColorSwatch bg="bg-white border border-slate-200" text="text-orange-700" label="John Smith" desc="Has a contract due date" />
+          <ColorSwatch bg="bg-white border border-slate-200" text="text-slate-800" label="John Smith" desc="No special status" />
+        </div>
+      </GuideSection>
+
+      <GuideSection title="Builder Player Pool: Age Badge Colours">
+        <div className="flex flex-wrap gap-2">
+          <span className="text-[10px] font-bold px-2 py-1 rounded leading-none tabular-nums bg-emerald-100 text-emerald-700 border border-emerald-200">18</span>
+          <span className="text-[10px] font-bold px-2 py-1 rounded leading-none tabular-nums bg-blue-100 text-blue-700 border border-blue-200">23</span>
+          <span className="text-[10px] font-bold px-2 py-1 rounded leading-none tabular-nums bg-amber-100 text-amber-800 border border-amber-200">29</span>
+          <span className="text-[10px] font-bold px-2 py-1 rounded leading-none tabular-nums bg-red-100 text-red-700 border border-red-200">30</span>
+        </div>
+        <p className="mt-2 text-sm text-slate-600">Green ≤ 18, Blue 19–23, Yellow 24–29, Red 30+.</p>
+      </GuideSection>
+
+      <GuideSection title="Builder Player Pool: Assignment Highlight">
+        <div className="space-y-2">
+          <div className="px-3 py-2 rounded-md text-xs font-semibold bg-white border border-slate-200 text-slate-800">White — not assigned</div>
+          <div className="px-3 py-2 rounded-md text-xs font-semibold bg-amber-50 border border-amber-200 text-slate-800">Amber — in 1 section</div>
+          <div className="px-3 py-2 rounded-md text-xs font-semibold bg-emerald-50 border border-emerald-200 text-slate-800">Green — in 2+ sections</div>
+        </div>
+      </GuideSection>
+
+      <GuideSection title="Builder Player Pool: Loaned Out Highlight">
+        <div className="space-y-2">
+          <div className="px-3 py-2 rounded-md text-xs font-semibold bg-purple-50 border border-purple-200 text-slate-800">Purple — assigned to Loaned Out</div>
+        </div>
+      </GuideSection>
+
+      <GuideSection title="CA / PA Text Colours">
+        <div className="flex gap-4 flex-wrap">
+          <span className="text-sm font-bold text-blue-600">CA</span>
+          <span className="text-sm font-bold text-violet-600">PA</span>
+        </div>
+      </GuideSection>
+    </div>
+  )
+}
+
+type ActiveTab = 'squad' | 'dashboard' | 'builder' | 'guide' | 'colors' | 'support'
 
 function GuideSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -100,10 +177,10 @@ function GuideView() {
       <GuideSection title="Recommendation (Rec.) Categories">
         <p>Each player is automatically assigned a recommendation based on their analytics. You can override this by clicking the badge in the Squad or Builder view.</p>
         <div className="space-y-2 mt-1">
-          <ColorSwatch bg="bg-blue-100" text="text-blue-700" label="DEVELOP" desc="Young player with meaningful PA headroom and the personality to reach it, or anyone with ≥40% superstar probability." />
-          <ColorSwatch bg="bg-emerald-100" text="text-emerald-700" label="KEEP" desc="Established quality player worth retaining — high CA, good PA ceiling, or superstar confirmed." />
-          <ColorSwatch bg="bg-amber-100" text="text-amber-700" label="MONITOR" desc="Watch and reassess — not ready to sell but not a clear development candidate either." />
-          <ColorSwatch bg="bg-red-100" text="text-red-700" label="SELL" desc="High sell score — typically older players near or past their ceiling, or young players with poor personality." />
+          <ColorSwatch bg="bg-blue-100" text="text-blue-700" label="DEV" desc="Develop — Young player with meaningful PA headroom and the personality to reach it, or anyone with ≥40% superstar probability." />
+          <ColorSwatch bg="bg-emerald-100" text="text-emerald-700" label="KEE" desc="Keep — Established quality player worth retaining — high CA, good PA ceiling, or superstar confirmed." />
+          <ColorSwatch bg="bg-amber-100" text="text-amber-700" label="MON" desc="Monitor — Watch and reassess — not ready to sell but not a clear development candidate either." />
+          <ColorSwatch bg="bg-red-100" text="text-red-700" label="SEL" desc="Sell — High sell score — typically older players near or past their ceiling, or young players near/past their ceiling." />
         </div>
         <p className="mt-2">An overridden badge has a <strong>dashed border</strong> and a ✎ icon. The override is saved in your browser and persists across sessions. Use <em>↺ Reset to auto</em> in the popover to revert.</p>
       </GuideSection>
@@ -121,10 +198,11 @@ function GuideView() {
       </GuideSection>
 
       <GuideSection title="Builder View">
-        <p><strong>Pool sidebar</strong> — All players in the current snapshot. Search by name or position. Sort by first name (FN), last name (LN), or position (POS). Drag any card into a section.</p>
-        <p><strong>Sections</strong> — Four positional groups: Goalkeepers, Defenders, Midfielder/DM, Strikers/AM. Players can appear in multiple sections. Within a section, drag rows to reorder.</p>
+        <p><strong>Pool sidebar</strong> — All players in the current snapshot. Search by name or position. Sort by first name (FN), last name (LN), position (POS), CA, or PA. Drag any card into a section. The pool sidebar can be resized in width.</p>
+        <p><strong>Pool cards</strong> — Show age (colour-coded), CA, and PA. Cards with a green background appear in 2+ sections; amber = 1 section; white = not yet assigned.</p>
+        <p><strong>Sections</strong> — Positional groups plus youth buckets: Goalkeepers, Defenders, Midfielder/DM, Strikers/AM, Youth Talents, Youth Trash. All sections can be collapsed/expanded. Players can appear in multiple sections. Within a section, drag rows to reorder.</p>
+        <p><strong>Youth Trash</strong> — Players in Youth Trash are removed from the Player Pool until you remove them from that section.</p>
         <p><strong>Attribute change colours</strong> — When a comparison snapshot is active, attribute cells are highlighted green (improved) or red (declined), the same as the Squad view.</p>
-        <p><strong>Pool card colours</strong> — Cards with a green background appear in 2+ sections; amber = 1 section; white = not yet assigned.</p>
         <p>Your section assignments and Rec. overrides are saved automatically in your browser.</p>
       </GuideSection>
 
@@ -160,7 +238,7 @@ function SupportView() {
           discussion. The developer monitors it regularly and aims to respond quickly.
         </p>
         <a
-          href="https://discord.gg/9heUABQH"
+          href="https://discord.gg/CdzYvzeGGZ"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-lg font-medium transition-colors"
@@ -264,11 +342,37 @@ function App() {
     try {
       const parsed = await parseFmHtmlExport(file)
       await saveSnapshotImport(parsed)
+
+      try {
+        const liveUids = new Set(parsed.playerSnapshots.map((p) => p.uid))
+        const incoming = loadIncomingPlayers()
+        const incomingKeys = Object.keys(incoming)
+        if (incomingKeys.length > 0) {
+          let changed = false
+          const nextIncoming = { ...incoming }
+          for (const uid of incomingKeys) {
+            if (!liveUids.has(uid)) continue
+            delete nextIncoming[uid]
+            changed = true
+          }
+          if (changed) saveIncomingPlayers(nextIncoming)
+        }
+
+        const layout = loadBuilderLayout()
+        if (layout.INCOMING.length > 0) {
+          const nextIncomingBucket = layout.INCOMING.filter((uid) => !liveUids.has(uid))
+          if (nextIncomingBucket.length !== layout.INCOMING.length) {
+            saveBuilderLayout({ ...layout, INCOMING: nextIncomingBucket })
+          }
+        }
+      } catch {}
+
       setSelectedSnapshotId(parsed.snapshot.id)
       setSelectedPlayerUid(null)
       showStatus(`Imported ${parsed.playerSnapshots.length} players from ${file.name}`)
-    } catch (e) {
-      showStatus(e instanceof Error ? e.message : String(e), false)
+    } catch (err) {
+      console.error(err)
+      showStatus(err instanceof Error ? err.message : 'Import failed', false)
     }
   }
 
@@ -326,7 +430,7 @@ function App() {
       <header className="bg-slate-900 text-white px-5 py-3 flex items-center gap-4 flex-shrink-0 shadow-lg">
         <div className="flex-1 min-w-0">
           <div className="text-base font-bold tracking-tight leading-none">FMImporter</div>
-          <div className="text-slate-400 text-xs mt-0.5">Client-side · IndexedDB · UID tracking · <span className="text-slate-500">v0.6.1</span></div>
+          <div className="text-slate-400 text-xs mt-0.5">Client-side · IndexedDB · UID tracking · <span className="text-slate-500">v0.7.1</span></div>
         </div>
 
         {status && (
@@ -340,6 +444,7 @@ function App() {
         )}
 
         <div className="flex items-center gap-2 flex-shrink-0">
+          <AdBanner className="hidden xl:block w-[520px]" />
           <label className="cursor-pointer bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors select-none">
             Import HTML
             <input
@@ -448,6 +553,14 @@ function App() {
               📖 Guide
             </button>
             <button
+              onClick={() => { setActiveTab('colors'); setSelectedPlayerUid(null) }}
+              className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                activeTab === 'colors' ? 'bg-slate-600 text-white' : 'text-slate-300 hover:bg-slate-700'
+              }`}
+            >
+              🎨 Color Chart
+            </button>
+            <button
               onClick={() => { setActiveTab('support'); setSelectedPlayerUid(null) }}
               className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 activeTab === 'support' ? 'bg-slate-600 text-white' : 'text-slate-300 hover:bg-slate-700'
@@ -544,6 +657,8 @@ function App() {
 
               {activeTab === 'guide' ? (
                 <GuideView />
+              ) : activeTab === 'colors' ? (
+                <ColorChartView />
               ) : activeTab === 'support' ? (
                 <SupportView />
               ) : selectedPlayerUid ? (
