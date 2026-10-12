@@ -68,7 +68,9 @@ npm run build
 
 The output is in `app/dist/`. Upload those files to any static web host.
 
-> **Note:** The `base` in `vite.config.ts` is set to `/fmimporter/app/` for the production deployment at seljenes.no. If you host at a different path, update that value before building.
+> **Note:** The `base` in `vite.config.ts` is set to `/fmimporter/` for the production deployment at seljenes.no. If you host at a different path, update that value before building.
+
+**Netlify:** `netlify.toml` builds `app/` (Node 22) and sets the security headers (incl. GoatCounter). seljenes.no proxies `/fmimporter/*` to the Netlify project `fmimporter`, so the address stays https://seljenes.no/fmimporter/.
 
 ---
 

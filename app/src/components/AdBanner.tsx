@@ -16,7 +16,7 @@ export function AdBanner({ className }: { className?: string }) {
       },
       {
         label: '🌊 Villa Bjørge: Din eksklusive perle ved sjøen i vakre Bergen.',
-        href: 'https://villabjorge.no',
+        href: 'https://villabjorge.no/no/',
         cta: 'Opplev villaen →',
       },
       {

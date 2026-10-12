@@ -1,0 +1,30 @@
+# Netlify project "fmimporter". Live address stays https://seljenes.no/fmimporter/ –
+# seljenes.no proxies /fmimporter/* to this project (see seljenes.no/netlify.toml).
+[build]
+  base = "app"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Vite builds with base "/fmimporter/", so the HTML asks for /fmimporter/assets/…
+# Served on its own (fmimporter.netlify.app) those paths are mapped back to the root.
+[[redirects]]
+  from = "/fmimporter/*"
+  to = "/:splat"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # GoatCounter (gc.zgo.at script + seljesoft.goatcounter.com beacon); everything else is bundled
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://gc.zgo.at; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://seljesoft.goatcounter.com; font-src 'self'; frame-ancestors 'none'; form-action 'self'; base-uri 'self'; object-src 'none'"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
