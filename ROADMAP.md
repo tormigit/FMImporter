@@ -17,3 +17,4 @@ Prod: https://seljenes.no/fmimporter
 - [x] FM HTML import, multi-season tracking with attribute-change highlighting
 - [x] Analytics (development potential, superstar probability, keep/sell) + DEVELOP/KEEP/MONITOR/SELL recommendations
 - [x] Drag-and-drop squad builder, player detail screen, JSON export/import
+- [x] Dependabot alerts fixed (npm audit fix: vite, postcss, nanoid, js-yaml and others)
