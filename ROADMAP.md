@@ -1,6 +1,6 @@
 # FMImporter
 
-Status: maintenance
+Stage: Maintenance
 Health: green
 Summary: Client-side web app to import Football Manager squad exports, track player development across seasons and plan squads; all data stays in the browser (IndexedDB).
 Run: `npm run dev`
