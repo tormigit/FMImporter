@@ -8,14 +8,13 @@ Repo: https://github.com/tormigit/FMImporter
 Prod: https://seljenes.no/fmimporter
 
 ## Now
-- [ ] Deploy day (Tormod's OK, all sites together, see `01-active/projectDashboard/ROADMAP.md`): push the
-      Cloudflare Web Analytics commit, then check on the live site that the counter loads without console errors
 
 ## Next
 
 ## Later
 
 ## Done
+- [x] Cloudflare Web Analytics live since deploy day 2026-10-28 (`cf-analytics.js` loads on the live site)
 - [x] Cloudflare Web Analytics (2026-10-28, committed, not pushed yet): `app/public/cf-analytics.js` (loaded from
       `app/index.html`) starts the cookieless counter after page load, on fmimporter.netlify.app and seljenes.no only;
       CSP allows it. GoatCounter removed (script tag and its CSP entries), so there is one counter like on the other sites
